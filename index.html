@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tollywood Ticket Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary: #ff4d4d;
+            --secondary: #ff9a3d;
+            --dark: #1a1a2e;
+            --light: #f0f0f0;
+            --success: #28a745;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(to right, var(--dark), #16213e);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            color: var(--primary);
+            font-size: 28px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1595769816263-9b910be24d5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1179&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 40px;
+        }
+        
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #ff3333;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 77, 77, 0.4);
+        }
+        
+        /* Movies Section */
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--dark);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .movie-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .movie-img {
+            height: 380px;
+            overflow: hidden;
+        }
+        
+        .movie-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .movie-card:hover .movie-img img {
+            transform: scale(1.1);
+        }
+        
+        .movie-info {
+            padding: 20px;
+        }
+        
+        .movie-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .movie-desc {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        /* Booking Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            border-radius: 10px;
+            max-width: 800px;
+            animation: modalFade 0.3s;
+        }
+        
+        @keyframes modalFade {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            background: var(--dark);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        
+        .close {
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close:hover {
+            color: var(--primary);
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .showtimes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .time-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .time-btn:hover {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .time-btn.selected {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .seats-container {
+            margin: 30px 0;
+        }
+        
+        .screen {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .seats-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .seat {
+            background: #ddd;
+            height: 30px;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .seat.selected {
+            background: var(--success);
+        }
+        
+        .seat.occupied {
+            background: #ff4d4d;
+            cursor: not-allowed;
+        }
+        
+        .booking-summary {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .footer-section p {
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #ccc;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                gap: 15px;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .showtimes {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .seats-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .movies-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .showtimes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .modal-content {
+                margin: 20px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-film"></i>
+                <h1>Tollywood Tickets</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Movies</a></li>
+                    <li><a href="#">Theaters</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Book Your Favorite Tollywood Movies</h2>
+            <p>Experience the magic of cinema with the latest blockbusters from Tollywood. Book your tickets now for an unforgettable movie experience.</p>
+            <a href="#movies" class="btn">Explore Movies</a>
+        </div>
+    </section>
+
+    <!-- Movies Section -->
+    <section id="movies" class="container">
+        <h2 class="section-title">Now Showing</h2>
+        <div class="movies-grid">
+            <!-- Movie 1 -->
+            <div class="movie-card">
+                <div class="movie-img">
+                    <img src="https://images.unsplash.com/photo-1635020169965-dbdc42e4650a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Pushpa: The Rise">
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-title">Pushpa: The Rise</h3>
+                    <p class="movie-desc">A laborer rises through the ranks of a red sandalwood smuggling syndicate.</p>
+                    <div class="movie-meta">
+                        <span>2h 59m</span>
+                        <span>Action/Drama</span>
+                    </div>
+                    <button class="btn book-btn" style="width: 100%; margin-top: 15px;" data-movie="Pushpa: The Rise">Book Tickets</button>
+                </div>
+            </div>
+
+            <!-- Movie 2 -->
+            <div class="movie-card">
+                <div class="movie-img">
+                    <img src="https://images.unsplash.com/photo-1594909122845-11baa439b7bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="RRR">
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-title">RRR</h3>
+                    <p class="movie-desc">A fictional story about two Indian revolutionaries and their journey away from home.</p>
+                    <div class="movie-meta">
+                        <span>3h 7m</span>
+                        <span>Action/Drama</span>
+                    </div>
+                    <button class="btn book-btn" style="width: 100%; margin-top: 15px;" data-movie="RRR">Book Tickets</button>
+                </div>
+            </div>
+
+            <!-- Movie 3 -->
+            <div class="movie-card">
+                <div class="movie-img">
+                    <img src="https://images.unsplash.com/photo-1585951237318-9ea5e175b891?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Baahubali 2">
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-title">Baahubali 2: The Conclusion</h3>
+                    <p class="movie-desc">The story of the battle for the kingdom of Mahishmati between two brothers.</p>
+                    <div class="movie-meta">
+                        <span>2h 47m</span>
+                        <span>Action/Fantasy</span>
+                    </div>
+                    <button class="btn book-btn" style="width: 100%; margin-top: 15px;" data-movie="Baahubali 2: The Conclusion">Book Tickets</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalMovieTitle">Movie Title</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Select Showtime</h3>
+                <div class="showtimes">
+                    <div class="time-btn">9:00 AM</div>
+                    <div class="time-btn">12:00 PM</div>
+                    <div class="time-btn">3:30 PM</div>
+                    <div class="time-btn">7:00 PM</div>
+                </div>
+
+                <div class="seats-container">
+                    <div class="screen">Screen This Way</div>
+                    <div class="seats-grid" id="seatsGrid">
+                        <!-- Seats will be generated with JavaScript -->
+                    </div>
+                </div>
+
+                <div class="booking-summary">
+                    <h3>Booking Summary</h3>
+                    <p>Movie: <span id="summaryMovie">-</span></p>
+                    <p>Showtime: <span id="summaryTime">-</span></p>
+                    <p>Seats: <span id="summarySeats">-</span></p>
+                    <p>Total: $<span id="summaryTotal">0</span></p>
+                    <button class="btn" id="proceedToPay" style="width: 100%; margin-top: 15px;">Proceed to Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Us</h3>
+                    <p>Your premier destination for booking Tollywood movie tickets. Experience the best of Indian cinema with us.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Cinema Street, Hyderabad</p>
+                    <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                    <p><i class="fas fa-envelope"></i> info@tollywoodtickets.com</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Tollywood Tickets. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal elements
+            const modal = document.getElementById('bookingModal');
+            const closeBtn = document.querySelector('.close');
+            const bookButtons = document.querySelectorAll('.book-btn');
+            const modalMovieTitle = document.getElementById('modalMovieTitle');
+            const timeButtons = document.querySelectorAll('.time-btn');
+            const seatsGrid = document.getElementById('seatsGrid');
+            const summaryMovie = document.getElementById('summaryMovie');
+            const summaryTime = document.getElementById('summaryTime');
+            const summarySeats = document.getElementById('summarySeats');
+            const summaryTotal = document.getElementById('summaryTotal');
+            const proceedToPay = document.getElementById('proceedToPay');
+            
+            // Booking data
+            let selectedMovie = '';
+            let selectedTime = '';
+            let selectedSeats = [];
+            const seatPrice = 250; // Price per seat in INR
+            
+            // Generate seats
+            function generateSeats() {
+                seatsGrid.innerHTML = '';
+                for (let i = 1; i <= 60; i++) {
+                    const seat = document.createElement('div');
+                    seat.classList.add('seat');
+                    seat.dataset.seat = i;
+                    
+                    // Randomly mark some seats as occupied (for demo)
+                    if (Math.random() < 0.3) {
+                        seat.classList.add('occupied');
+                    }
+                    
+                    seat.addEventListener('click', () => selectSeat(seat));
+                    seatsGrid.appendChild(seat);
+                }
+            }
+            
+            // Open modal when book button is clicked
+            bookButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    selectedMovie = this.dataset.movie;
+                    modalMovieTitle.textContent = selectedMovie;
+                    summaryMovie.textContent = selectedMovie;
+                    modal.style.display = 'block';
+                    generateSeats();
+                    resetSelection();
+                });
+            });
+            
+            // Close modal
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // Close modal if clicked outside
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Select showtime
+            timeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    timeButtons.forEach(btn => btn.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedTime = this.textContent;
+                    summaryTime.textContent = selectedTime;
+                    updateSummary();
+                });
+            });
+            
+            // Select seat
+            function selectSeat(seat) {
+                if (seat.classList.contains('occupied')) return;
+                
+                const seatNumber = seat.dataset.seat;
+                
+                if (seat.classList.contains('selected')) {
+                    seat.classList.remove('selected');
+                    selectedSeats = selectedSeats.filter(s => s !== seatNumber);
+                } else {
+                    seat.classList.add('selected');
+                    selectedSeats.push(seatNumber);
+                }
+                
+                updateSummary();
+            }
+            
+            // Update booking summary
+            function updateSummary() {
+                summarySeats.textContent = selectedSeats.join(', ');
+                summaryTotal.textContent = selectedSeats.length * seatPrice;
+            }
+            
+            // Reset selection
+            function resetSelection() {
+                selectedTime = '';
+                selectedSeats = [];
+                timeButtons.forEach(btn => btn.classList.remove('selected'));
+                summaryTime.textContent = '-';
+                summarySeats.textContent = '-';
+                summaryTotal.textContent = '0';
+            }
+            
+            // Proceed to payment
+            proceedToPay.addEventListener('click', function() {
+                if (!selectedTime || selectedSeats.length === 0) {
+                    alert('Please select a showtime and at least one seat.');
+                    return;
+                }
+                
+                alert(`Booking confirmed!\nMovie: ${selectedMovie}\nTime: ${selectedTime}\nSeats: ${selectedSeats.join(', ')}\nTotal: ₹${selectedSeats.length * seatPrice}\n\nThank you for your booking!`);
+                modal.style.display = 'none';
+            });
+            
+            // Initialize seats
+            generateSeats();
+        });
+    </script>
+</body>
+</html>
